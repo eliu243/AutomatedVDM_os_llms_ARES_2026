@@ -1,0 +1,593 @@
+---------------------------------
+--- v1: base prompt variation ---
+---------------------------------
+You are a cybersecurity expert specializing in attack techniques and software vulnerabilities.
+
+Your task is to assess how strongly a given attack technique is related to a specific vulnerability.
+
+Definition of relatedness:
+- A technique is considered related to a vulnerability if the technique can directly exploit, enable, or meaningfully leverage the vulnerability in real-world attacks.
+- Indirect, speculative, or purely contextual associations should receive low scores.
+
+Attack Technique:
+Name: {left_name}
+Description: {left_description}
+
+Vulnerability:
+CVE ID: {right_id}
+Description: {right_description}
+
+Question:
+On a scale from 1 to 10, how related is this attack technique to this vulnerability?
+
+Scoring guidelines:
+- 1–3: Not related or only very weakly related
+- 4–6: Loosely or indirectly related
+- 7–8: Strongly related but not a direct exploitation
+- 9–10: Directly related (the technique explicitly exploits or depends on this vulnerability)
+
+INSTRUCTIONS:
+Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
+
+Example:
+Score: 8
+
+---------------------------------
+--- v2: base prompt variation ---
+---------------------------------
+You are a cybersecurity expert specializing in software vulnerabilities and attack techniques.
+
+Your task is to assess how strongly a given attack technique is related to a specific vulnerability.
+
+Definition of relatedness:
+- A technique is considered related to a vulnerability if it can directly exploit, enable, or meaningfully leverage the vulnerability in real-world attacks.
+- Indirect, speculative, or purely contextual associations should receive low scores.
+
+Vulnerability:
+CVE ID: {right_id}
+Description: {right_description}
+
+Attack Technique:
+Name: {left_name}
+Description: {left_description}
+
+Question:
+On a scale from 1 to 10, how related is this attack technique to the vulnerability described above?
+
+Scoring guidelines:
+- 1–3: Not related or only very weakly related
+- 4–6: Loosely or indirectly related
+- 7–8: Strongly related but not a direct exploitation
+- 9–10: Directly related (the technique explicitly exploits or depends on this vulnerability)
+
+INSTRUCTIONS:
+Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
+
+Example:
+Score: 8
+
+
+---------------------------------
+--- v3: base prompt variation ---
+---------------------------------
+You are an expert in cyber attack techniques and vulnerability exploitation.
+
+Your task is to evaluate the directness of the relationship between an attack technique and a specific CVE.
+
+A score of 9–10 MUST ONLY be used if:
+- The technique directly exploits the vulnerability, OR
+- The vulnerability is a known prerequisite or enabling condition for the technique.
+
+A score of 7–8 indicates:
+- The vulnerability significantly facilitates the technique but is not strictly required.
+
+Lower scores indicate indirect, contextual, or no meaningful relationship.
+
+Attack Technique:
+Name: {left_name}
+Description: {left_description}
+
+Vulnerability:
+CVE ID: {right_id}
+Description: {right_description}
+
+Question:
+How related are the attack technique and the vulnerability?
+
+INSTRUCTIONS:
+Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
+
+Example:
+Score: 8
+
+
+------------------------------------------------------------
+--- v4: v1 as base prompt extended w/ few shot examples ---
+------------------------------------------------------------
+You are a cybersecurity expert specializing in attack techniques and software vulnerabilities.
+
+Your task is to assess how strongly a given attack technique is related to a specific vulnerability.
+
+Definition of relatedness:
+- A technique is considered related to a vulnerability if the technique can directly exploit, enable, or meaningfully leverage the vulnerability in real-world attacks.
+- Indirect, speculative, or purely contextual associations should receive low scores.
+
+Attack Technique:
+Name: {left_name}
+Description: {left_description}
+
+Vulnerability:
+CVE ID: {right_id}
+Description: {right_description}
+
+Question:
+On a scale from 1 to 10, how related is this attack technique to this vulnerability?
+
+Scoring guidelines:
+- 1–3: Not related or only very weakly related
+- 4–6: Loosely or indirectly related
+- 7–8: Strongly related but not a direct exploitation
+- 9–10: Directly related (the technique explicitly exploits or depends on this vulnerability)
+
+---------------------
+REFERENCE EXAMPLES
+---------------------
+ATT&CK Technique:
+Name: Exploit Public-Facing Application (T1190)
+Description:
+Adversaries may exploit vulnerabilities in internet-facing applications to gain initial access to systems.
+
+CVE ID: CVE-2021-44228
+Description:
+Apache Log4j2 allows remote code execution via attacker-controlled JNDI lookup strings when logged by vulnerable applications.
+
+Score: 10
+
+Rationale:
+This vulnerability is directly exploited through a public-facing application to achieve remote code execution and initial access. The technique explicitly describes exploiting such application-layer vulnerabilities, making this a direct and canonical match.
+---------------------
+Attack Technique:
+Name: Exploitation of Remote Services (T1210)
+Description:
+Adversaries may exploit vulnerabilities in network services to gain unauthorized access to remote systems.
+
+Vulnerability:
+CVE ID: CVE-2017-0144
+Description:
+Microsoft SMBv1 vulnerability allows remote attackers to execute arbitrary code via crafted SMB packets.
+
+Score: 10
+
+Rationale:
+The vulnerability is exploited by sending crafted packets to a network-exposed SMB service, resulting in remote code execution. This precisely matches the definition of exploiting a remote service for unauthorized access.
+---------------------
+Attack Technique:
+Name: Credential Dumping (T1003)
+Description:
+Adversaries may attempt to dump credentials from operating systems or applications.
+
+Vulnerability:
+CVE ID: CVE-2020-1472
+Description:
+Netlogon Elevation of Privilege vulnerability allows attackers to impersonate domain controllers due to cryptographic flaws.
+
+Score: 8
+
+Rationale:
+While the vulnerability itself does not directly dump credentials, it enables attackers to elevate privileges to domain controller level, which strongly facilitates credential dumping. The relationship is strong but indirect, as the technique follows exploitation rather than constituting the exploit itself.
+---------------------
+Attack Technique:
+Name: Abuse Elevation Control Mechanism (T1548)
+Description:
+Adversaries may bypass or abuse mechanisms designed to control privilege escalation.
+
+Vulnerability:
+CVE ID: CVE-2021-36934
+Description:
+Windows allows low-privileged users to read sensitive registry hives due to incorrect permission settings.
+
+Score: 7
+
+Rationale:
+The vulnerability weakens privilege boundaries by exposing sensitive system data to low-privileged users. While the technique is broader than the specific flaw, exploitation of the vulnerability meaningfully enables abuse of elevation control mechanisms.
+---------------------
+Attack Technique:
+Name: Phishing (T1566)
+Description:
+Adversaries may send phishing messages to gain access to victim systems or credentials.
+
+Vulnerability:
+CVE ID: CVE-2018-4878
+Description:
+Adobe Flash Player allows remote code execution through crafted Flash content causing memory corruption.
+
+Score: 5
+
+Rationale:
+Phishing can be used as a delivery mechanism to lure victims into opening malicious Flash content that triggers the vulnerability. However, the technique does not exploit the vulnerability itself and is only indirectly related.
+---------------------
+Attack Technique:
+Name: Data Encrypted for Impact (T1486)
+Description:
+Adversaries may encrypt data on target systems to disrupt availability.
+
+Vulnerability:
+CVE ID: CVE-2019-0708
+Description:
+Remote Desktop Services vulnerability allows remote code execution via crafted RDP requests.
+
+Score: 2
+
+Rationale:
+Although the vulnerability could be used to gain access that later enables ransomware activity, the encryption technique does not depend on or directly leverage the vulnerability. The relationship is weak and purely consequential.
+---------------------
+Attack Technique:
+Name: Exfiltration Over Web Service (T1567)
+Description:
+Adversaries may exfiltrate data using web services.
+
+Vulnerability:
+CVE ID: CVE-2014-0160
+Description:
+OpenSSL Heartbleed vulnerability allows attackers to read sensitive memory contents from affected systems.
+
+Score: 1
+
+Rationale:
+The vulnerability results in unintended memory disclosure but does not involve or enable data exfiltration via web services. The technique and vulnerability operate through unrelated mechanisms.
+---------------------
+
+
+INSTRUCTIONS:
+Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
+
+Example:
+Score: 8
+
+
+
+------------------------------------------------------------
+--- v5: v2 as base prompt extended w/ few shot examples ---
+------------------------------------------------------------
+You are a cybersecurity expert specializing in software vulnerabilities and attack techniques.
+
+Your task is to assess how strongly a given attack technique is related to a specific vulnerability.
+
+Definition of relatedness:
+- A technique is considered related to a vulnerability if it can directly exploit, enable, or meaningfully leverage the vulnerability in real-world attacks.
+- Indirect, speculative, or purely contextual associations should receive low scores.
+
+Vulnerability:
+CVE ID: {right_id}
+Description: {right_description}
+
+Attack Technique:
+Name: {left_name}
+Description: {left_description}
+
+Question:
+On a scale from 1 to 10, how related is this attack technique to the vulnerability described above?
+
+Scoring guidelines:
+- 1–3: Not related or only very weakly related
+- 4–6: Loosely or indirectly related
+- 7–8: Strongly related but not a direct exploitation
+- 9–10: Directly related (the technique explicitly exploits or depends on this vulnerability)
+
+---------------------
+REFERENCE EXAMPLES
+---------------------
+ATT&CK Technique:
+Name: Exploit Public-Facing Application (T1190)
+Description:
+Adversaries may exploit vulnerabilities in internet-facing applications to gain initial access to systems.
+
+CVE ID: CVE-2021-44228
+Description:
+Apache Log4j2 allows remote code execution via attacker-controlled JNDI lookup strings when logged by vulnerable applications.
+
+Score: 10
+
+Rationale:
+This vulnerability is directly exploited through a public-facing application to achieve remote code execution and initial access. The technique explicitly describes exploiting such application-layer vulnerabilities, making this a direct and canonical match.
+---------------------
+Attack Technique:
+Name: Exploitation of Remote Services (T1210)
+Description:
+Adversaries may exploit vulnerabilities in network services to gain unauthorized access to remote systems.
+
+Vulnerability:
+CVE ID: CVE-2017-0144
+Description:
+Microsoft SMBv1 vulnerability allows remote attackers to execute arbitrary code via crafted SMB packets.
+
+Score: 10
+
+Rationale:
+The vulnerability is exploited by sending crafted packets to a network-exposed SMB service, resulting in remote code execution. This precisely matches the definition of exploiting a remote service for unauthorized access.
+---------------------
+Attack Technique:
+Name: Credential Dumping (T1003)
+Description:
+Adversaries may attempt to dump credentials from operating systems or applications.
+
+Vulnerability:
+CVE ID: CVE-2020-1472
+Description:
+Netlogon Elevation of Privilege vulnerability allows attackers to impersonate domain controllers due to cryptographic flaws.
+
+Score: 8
+
+Rationale:
+While the vulnerability itself does not directly dump credentials, it enables attackers to elevate privileges to domain controller level, which strongly facilitates credential dumping. The relationship is strong but indirect, as the technique follows exploitation rather than constituting the exploit itself.
+---------------------
+Attack Technique:
+Name: Abuse Elevation Control Mechanism (T1548)
+Description:
+Adversaries may bypass or abuse mechanisms designed to control privilege escalation.
+
+Vulnerability:
+CVE ID: CVE-2021-36934
+Description:
+Windows allows low-privileged users to read sensitive registry hives due to incorrect permission settings.
+
+Score: 7
+
+Rationale:
+The vulnerability weakens privilege boundaries by exposing sensitive system data to low-privileged users. While the technique is broader than the specific flaw, exploitation of the vulnerability meaningfully enables abuse of elevation control mechanisms.
+---------------------
+Attack Technique:
+Name: Phishing (T1566)
+Description:
+Adversaries may send phishing messages to gain access to victim systems or credentials.
+
+Vulnerability:
+CVE ID: CVE-2018-4878
+Description:
+Adobe Flash Player allows remote code execution through crafted Flash content causing memory corruption.
+
+Score: 5
+
+Rationale:
+Phishing can be used as a delivery mechanism to lure victims into opening malicious Flash content that triggers the vulnerability. However, the technique does not exploit the vulnerability itself and is only indirectly related.
+---------------------
+Attack Technique:
+Name: Data Encrypted for Impact (T1486)
+Description:
+Adversaries may encrypt data on target systems to disrupt availability.
+
+Vulnerability:
+CVE ID: CVE-2019-0708
+Description:
+Remote Desktop Services vulnerability allows remote code execution via crafted RDP requests.
+
+Score: 2
+
+Rationale:
+Although the vulnerability could be used to gain access that later enables ransomware activity, the encryption technique does not depend on or directly leverage the vulnerability. The relationship is weak and purely consequential.
+---------------------
+Attack Technique:
+Name: Exfiltration Over Web Service (T1567)
+Description:
+Adversaries may exfiltrate data using web services.
+
+Vulnerability:
+CVE ID: CVE-2014-0160
+Description:
+OpenSSL Heartbleed vulnerability allows attackers to read sensitive memory contents from affected systems.
+
+Score: 1
+
+Rationale:
+The vulnerability results in unintended memory disclosure but does not involve or enable data exfiltration via web services. The technique and vulnerability operate through unrelated mechanisms.
+---------------------
+
+INSTRUCTIONS:
+Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
+
+Example:
+Score: 8
+
+
+------------------------------------------------------------
+--- TBD: v3 as base prompt extended w/ few shot examples ---
+------------------------------------------------------------
+You are an expert in cyber attack techniques and vulnerability exploitation.
+
+Your task is to evaluate the directness of the relationship between an attack technique and a specific CVE.
+
+A score of 9–10 MUST ONLY be used if:
+- The technique directly exploits the vulnerability, OR
+- The vulnerability is a known prerequisite or enabling condition for the technique.
+
+A score of 7–8 indicates:
+- The vulnerability significantly facilitates the technique but is not strictly required.
+
+Lower scores indicate indirect, contextual, or no meaningful relationship.
+
+Attack Technique:
+Name: {left_name}
+Description: {left_description}
+
+Vulnerability:
+CVE ID: {right_id}
+Description: {right_description}
+
+Question:
+How related are the attack technique and the vulnerability?
+
+---------------------
+REFERENCE EXAMPLES
+---------------------
+ATT&CK Technique:
+Name: Exploit Public-Facing Application (T1190)
+Description:
+Adversaries may exploit vulnerabilities in internet-facing applications to gain initial access to systems.
+
+CVE ID: CVE-2021-44228
+Description:
+Apache Log4j2 allows remote code execution via attacker-controlled JNDI lookup strings when logged by vulnerable applications.
+
+Score: 10
+
+Rationale:
+This vulnerability is directly exploited through a public-facing application to achieve remote code execution and initial access. The technique explicitly describes exploiting such application-layer vulnerabilities, making this a direct and canonical match.
+---------------------
+Attack Technique:
+Name: Exploitation of Remote Services (T1210)
+Description:
+Adversaries may exploit vulnerabilities in network services to gain unauthorized access to remote systems.
+
+Vulnerability:
+CVE ID: CVE-2017-0144
+Description:
+Microsoft SMBv1 vulnerability allows remote attackers to execute arbitrary code via crafted SMB packets.
+
+Score: 10
+
+Rationale:
+The vulnerability is exploited by sending crafted packets to a network-exposed SMB service, resulting in remote code execution. This precisely matches the definition of exploiting a remote service for unauthorized access.
+---------------------
+Attack Technique:
+Name: Credential Dumping (T1003)
+Description:
+Adversaries may attempt to dump credentials from operating systems or applications.
+
+Vulnerability:
+CVE ID: CVE-2020-1472
+Description:
+Netlogon Elevation of Privilege vulnerability allows attackers to impersonate domain controllers due to cryptographic flaws.
+
+Score: 8
+
+Rationale:
+While the vulnerability itself does not directly dump credentials, it enables attackers to elevate privileges to domain controller level, which strongly facilitates credential dumping. The relationship is strong but indirect, as the technique follows exploitation rather than constituting the exploit itself.
+---------------------
+Attack Technique:
+Name: Abuse Elevation Control Mechanism (T1548)
+Description:
+Adversaries may bypass or abuse mechanisms designed to control privilege escalation.
+
+Vulnerability:
+CVE ID: CVE-2021-36934
+Description:
+Windows allows low-privileged users to read sensitive registry hives due to incorrect permission settings.
+
+Score: 7
+
+Rationale:
+The vulnerability weakens privilege boundaries by exposing sensitive system data to low-privileged users. While the technique is broader than the specific flaw, exploitation of the vulnerability meaningfully enables abuse of elevation control mechanisms.
+---------------------
+Attack Technique:
+Name: Phishing (T1566)
+Description:
+Adversaries may send phishing messages to gain access to victim systems or credentials.
+
+Vulnerability:
+CVE ID: CVE-2018-4878
+Description:
+Adobe Flash Player allows remote code execution through crafted Flash content causing memory corruption.
+
+Score: 5
+
+Rationale:
+Phishing can be used as a delivery mechanism to lure victims into opening malicious Flash content that triggers the vulnerability. However, the technique does not exploit the vulnerability itself and is only indirectly related.
+---------------------
+Attack Technique:
+Name: Data Encrypted for Impact (T1486)
+Description:
+Adversaries may encrypt data on target systems to disrupt availability.
+
+Vulnerability:
+CVE ID: CVE-2019-0708
+Description:
+Remote Desktop Services vulnerability allows remote code execution via crafted RDP requests.
+
+Score: 2
+
+Rationale:
+Although the vulnerability could be used to gain access that later enables ransomware activity, the encryption technique does not depend on or directly leverage the vulnerability. The relationship is weak and purely consequential.
+---------------------
+Attack Technique:
+Name: Exfiltration Over Web Service (T1567)
+Description:
+Adversaries may exfiltrate data using web services.
+
+Vulnerability:
+CVE ID: CVE-2014-0160
+Description:
+OpenSSL Heartbleed vulnerability allows attackers to read sensitive memory contents from affected systems.
+
+Score: 1
+
+Rationale:
+The vulnerability results in unintended memory disclosure but does not involve or enable data exfiltration via web services. The technique and vulnerability operate through unrelated mechanisms.
+---------------------
+
+INSTRUCTIONS:
+Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
+
+Example:
+Score: 8
+
+
+------------------------------------
+--- v6a: Gemma GEPA Optimization ---
+------------------------------------
+
+You are a cybersecurity expert specializing in attack techniques and software vulnerabilities.
+
+Given the following pair:
+
+General cybersecurity concept (left):
+Name: {left_name}
+Description: {left_description}
+
+Specific vulnerability (right):
+Name: {right_name}
+Description: {right_description}
+
+The task is to assess the relationship between the general cybersecurity concept (left side) and the specific vulnerability (right side). Both inputs relate to cybersecurity. The score should reflect how directly the vulnerability exemplifies or relates to the general concept.
+
+Use this 0–10 scoring scale (integers only):
+- 10 = perfect match or direct example of the concept
+- 0  = no relationship at all
+
+The reasoning you perform internally should mirror the following guidance (but you will NOT output the reasoning, only the final score):
+
+- The vulnerability is a direct example of the concept if it clearly instantiates or enables the behavior described on the left.
+- The left text can discuss various techniques, motivations, and botnets related to a particular attack type, and the right text will usually describe a specific vulnerability enabling that attack type.
+- If the vulnerability is a specific instance of the concept described on the left, it should get a high score; if the relationship is loose or indirect, the score should be lower.
+- Consider whether the vulnerability contributes to or enables the described concept (even if it’s one of several possible ways to do so).
+
+You should also apply the following domain knowledge:
+
+- Endpoint Denial of Service (DoS): Attacks aimed at degrading or blocking the availability of services, often by exhausting system resources or causing crashes. This can be performed by various means including IP address spoofing, botnets, and traffic manipulation. (T1498)
+- Bring Your Own Vulnerable Driver (BYOVD): Adversaries may include a vulnerable driver with files delivered during Initial Access or download it to a compromised system via Ingress Tool Transfer or Lateral Tool Transfer, to exploit the vulnerability and execute code in kernel mode.
+- Command and Scripting Interpreter: Adversaries may abuse command and script interpreters (e.g., Unix Shell, Windows Command Shell, PowerShell, Python, JavaScript, Visual Basic) to execute commands, scripts, or binaries. Cross-Site Scripting (XSS) vulnerabilities allow attackers to inject malicious scripts, effectively using a scripting interpreter (JavaScript) within a web browser to execute arbitrary code. (T1059)
+- Privilege Escalation: Adversaries may exploit software vulnerabilities to elevate privileges, potentially moving from user level to SYSTEM or root permissions. Even privilege escalation to a level below SYSTEM or root is relevant. (T1068, T1548)
+- Gather Victim Host Information: Adversaries may gather information about victim hosts (e.g., OS version, installed software, device identifiers) for reconnaissance, establishing operational resources, and initial access. User-Agent HTTP headers are one source, but ANY system information disclosure is relevant. (T1595, T1593, T1594, T1596)
+- Generalizable Strategy: Decide whether the specific vulnerability detailed on the right serves as an instance, example, or enabler of the general concept on the left. If it directly exemplifies the left, the score should be high; if the connection is loose or indirect, the score should be lower. Consider if the vulnerability provides a prerequisite or enables further malicious actions related to the described concept.
+
+Scoring guidelines:
+- 8–9: Strong connection. The vulnerability is a clear and direct example of the concept.
+- 7–8: Good connection. The vulnerability demonstrably contributes to or enables the described concept.
+- 5–6: Moderate connection. The vulnerability has some relevance, but the connection is less direct (e.g., a prerequisite or partial enabler).
+- 0–4: Weak or no connection. The vulnerability is only tangentially related to the concept.
+
+Specific considerations:
+- When assessing "Privilege Escalation", consider whether the vulnerability enables an adversary to gain higher privileges, even if it isn’t SYSTEM or root; enabling further privileged actions still supports the concept.
+- When assessing "Gather Victim Host Information", prioritize vulnerabilities that directly facilitate information collection, but treat ANY system information disclosure as relevant. If the vulnerability facilitates information disclosure that can be exploited for subsequent privilege escalation, it should lean toward the higher part of the “good connection” range.
+- Consider how adversaries utilize specific techniques such as BYOVD; a vulnerability that supports or enables these techniques (e.g., enabling exploitation of a vulnerable driver) should receive a higher score.
+- XSS vulnerabilities directly relate to the "Command and Scripting Interpreter" concept because they leverage JavaScript within a browser environment.
+
+INSTRUCTIONS:
+Respond with ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
+
+Example:
+Score: 9
+
+
+------------------------------------
+--- v6b: Qwen GEPA Optimization ---
+------------------------------------

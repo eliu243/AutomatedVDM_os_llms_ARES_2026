@@ -1,0 +1,181 @@
+*********************************
+--- v1: base prompt variation ---
+*********************************
+You are a cybersecurity expert specializing in vulnerability analysis and weakness classification.
+
+Your task is to evaluate how strongly a specific CVE is related to a specific CWE using a score from 0 to 10.
+
+SCORING DEFINITION:
+0 = Completely unrelated
+2 = Very weak or tangential relationship
+4 = Partial or indirect relationship
+6 = Likely related but not clearly primary
+8 = Strong relationship (CWE likely describes a major contributing weakness)
+10 = Direct relationship (The CWE clearly represents the root cause exploited by the CVE)
+
+IMPORTANT SCORING GUIDELINES:
+- Focus on whether the CWE describes the underlying weakness exploited in the CVE.
+- Do NOT score based on keyword similarity alone.
+- Prefer causal and technical relationships over thematic similarity.
+- If the CWE describes a broad category and the CVE is a specific instance of that category, this is usually 8–10.
+- If the CWE only partially explains the vulnerability or is a secondary factor, score 4–7.
+- If no meaningful exploit or weakness relationship exists, score 0–3.
+
+INPUT DATA:
+
+[CVE]
+ID: {right_id}
+Description:
+{right_description}
+
+[CWE]
+ID: {left_id}
+Description:
+{left_description}
+
+INSTRUCTIONS:
+Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
+
+Example:
+Score: 8
+
+*********************************
+--- v2: base prompt variation ---
+*********************************
+You are evaluating the strength of relationship between a CVE and a CWE.
+
+The goal is to determine how well the CWE explains the vulnerability described in the CVE.
+
+RELATIONSHIP SCALE:
+
+10 → CWE directly describes the root weakness exploited by the CVE  
+8–9 → CWE strongly explains the vulnerability but may be slightly broader or missing small details  
+5–7 → CWE is plausibly related but not clearly primary  
+2–4 → CWE is loosely or indirectly related  
+0–1 → No meaningful relationship  
+
+EVALUATION PROCESS:
+- Identify the vulnerability mechanism described in the CVE.
+- Identify the weakness class described in the CWE.
+- Determine whether exploitation of the CVE depends on that weakness.
+
+If exploitation would NOT reasonably occur without the CWE weakness → score ≥ 8  
+If the CWE could apply but is not required → score 4–7  
+If the CWE does not explain the vulnerability → score ≤ 3  
+
+INPUTS:
+
+CVE:
+ID: {right_id}
+Description: {right_description}
+
+CWE:
+ID: {left_id}
+Description: {left_description}
+
+INSTRUCTIONS:
+Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
+
+Example:
+Score: 8
+
+
+***********************************************************
+--- v3: v2 as base prompt extended w/ few shot examples ---
+***********************************************************
+You are evaluating the strength of relationship between a CVE and a CWE.
+
+The goal is to determine how well the CWE explains the vulnerability described in the CVE.
+
+RELATIONSHIP SCALE:
+
+10 → CWE directly describes the root weakness exploited by the CVE  
+8–9 → CWE strongly explains the vulnerability but may be slightly broader or missing small details  
+5–7 → CWE is plausibly related but not clearly primary  
+2–4 → CWE is loosely or indirectly related  
+0–1 → No meaningful relationship  
+
+EVALUATION PROCESS:
+- Identify the vulnerability mechanism described in the CVE.
+- Identify the weakness class described in the CWE.
+- Determine whether exploitation of the CVE depends on that weakness.
+
+If exploitation would NOT reasonably occur without the CWE weakness → score ≥ 8  
+If the CWE could apply but is not required → score 4–7  
+If the CWE does not explain the vulnerability → score ≤ 3  
+
+INPUTS:
+
+CVE:
+ID: {right_id}
+Description: {right_description}
+
+CWE:
+ID: {left_id}
+Description: {left_description}
+
+---------------------
+REFERENCE EXAMPLES
+---------------------
+CVE ID: CVE-2014-0160
+Description:
+The Heartbeat extension in OpenSSL allows remote attackers to obtain sensitive information from process memory via crafted TLS heartbeat requests, resulting in disclosure of private keys and user data.
+
+CWE ID: CWE-125
+Description:
+Out-of-bounds Read — The product reads data past the end, or before the beginning, of the intended buffer.
+
+Score: 10
+
+Rationale:
+The vulnerability occurs because the OpenSSL Heartbeat implementation reads more memory than allocated due to improper bounds checking. The attacker exploits an out-of-bounds read directly, which precisely matches CWE-125 as the root cause.
+---------------------
+CVE ID: CVE-2021-44228
+Description:
+Apache Log4j2 contains a vulnerability where attacker-controlled input can trigger remote code execution through JNDI lookups when logging crafted strings.
+
+CWE ID: CWE-74
+Description:
+Improper Neutralization of Special Elements in Output Used by a Downstream Component.
+
+Score: 8
+
+Rationale:
+The vulnerability arises because user-controlled input is logged without proper neutralization, allowing malicious JNDI lookup strings to be interpreted. While multiple technical factors contribute to exploitation, CWE-74 captures the primary weakness enabling injection into downstream components.
+---------------------
+CVE ID: CVE-2017-5638
+Description:
+Apache Struts allows remote attackers to execute arbitrary code via crafted Content-Type headers that trigger improper exception handling and unsafe expression evaluation.
+
+CWE ID: CWE-20
+Description:
+Improper Input Validation — The product does not validate or incorrectly validates input.
+
+Score: 6
+
+Rationale:
+Improper validation of the Content-Type header contributes to exploitation. However, the primary exploitation mechanism involves unsafe expression evaluation in the framework. CWE-20 is relevant but does not fully capture the specific root cause.
+---------------------
+CVE ID: CVE-2020-1472
+Description:
+Netlogon Elevation of Privilege vulnerability (Zerologon) allows attackers to impersonate domain controllers due to flaws in cryptographic authentication.
+
+CWE ID: CWE-284
+Description:
+Improper Access Control — The product does not restrict access properly.
+
+Score: 2
+
+Rationale:
+While exploitation results in unauthorized access, the vulnerability is primarily caused by flaws in cryptographic authentication protocol implementation. CWE-284 only loosely describes the resulting access control failure rather than the root weakness.
+---------------------
+
+
+INSTRUCTIONS:
+Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
+
+Example:
+Score: 8
+
+
+ 

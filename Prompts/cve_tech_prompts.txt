@@ -1,39 +1,5 @@
 ---------------------------------
---- v1: base prompt variation ---
----------------------------------
-You are a cybersecurity expert specializing in attack techniques and software vulnerabilities.
-
-Your task is to assess how strongly a given attack technique is related to a specific vulnerability.
-
-Definition of relatedness:
-- A technique is considered related to a vulnerability if the technique can directly exploit, enable, or meaningfully leverage the vulnerability in real-world attacks.
-- Indirect, speculative, or purely contextual associations should receive low scores.
-
-Attack Technique:
-Name: {left_name}
-Description: {left_description}
-
-Vulnerability:
-CVE ID: {right_id}
-Description: {right_description}
-
-Question:
-On a scale from 1 to 10, how related is this attack technique to this vulnerability?
-
-Scoring guidelines:
-- 1–3: Not related or only very weakly related
-- 4–6: Loosely or indirectly related
-- 7–8: Strongly related but not a direct exploitation
-- 9–10: Directly related (the technique explicitly exploits or depends on this vulnerability)
-
-INSTRUCTIONS:
-Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
-
-Example:
-Score: 8
-
----------------------------------
---- v2: base prompt variation ---
+--- Gemma best prompt ---
 ---------------------------------
 You are a cybersecurity expert specializing in software vulnerabilities and attack techniques.
 
@@ -68,7 +34,7 @@ Score: 8
 
 
 ---------------------------------
---- v3: base prompt variation ---
+--- Qwen best prompt ---
 ---------------------------------
 You are an expert in cyber attack techniques and vulnerability exploitation.
 
@@ -102,7 +68,7 @@ Score: 8
 
 
 ------------------------------------------------------------
---- v4: v1 as base prompt extended w/ few shot examples ---
+--- Gemma prompt extended w/ few shot examples ---
 ------------------------------------------------------------
 You are a cybersecurity expert specializing in attack techniques and software vulnerabilities.
 
@@ -245,152 +211,8 @@ Example:
 Score: 8
 
 
-
 ------------------------------------------------------------
---- v5: v2 as base prompt extended w/ few shot examples ---
-------------------------------------------------------------
-You are a cybersecurity expert specializing in software vulnerabilities and attack techniques.
-
-Your task is to assess how strongly a given attack technique is related to a specific vulnerability.
-
-Definition of relatedness:
-- A technique is considered related to a vulnerability if it can directly exploit, enable, or meaningfully leverage the vulnerability in real-world attacks.
-- Indirect, speculative, or purely contextual associations should receive low scores.
-
-Vulnerability:
-CVE ID: {right_id}
-Description: {right_description}
-
-Attack Technique:
-Name: {left_name}
-Description: {left_description}
-
-Question:
-On a scale from 1 to 10, how related is this attack technique to the vulnerability described above?
-
-Scoring guidelines:
-- 1–3: Not related or only very weakly related
-- 4–6: Loosely or indirectly related
-- 7–8: Strongly related but not a direct exploitation
-- 9–10: Directly related (the technique explicitly exploits or depends on this vulnerability)
-
----------------------
-REFERENCE EXAMPLES
----------------------
-ATT&CK Technique:
-Name: Exploit Public-Facing Application (T1190)
-Description:
-Adversaries may exploit vulnerabilities in internet-facing applications to gain initial access to systems.
-
-CVE ID: CVE-2021-44228
-Description:
-Apache Log4j2 allows remote code execution via attacker-controlled JNDI lookup strings when logged by vulnerable applications.
-
-Score: 10
-
-Rationale:
-This vulnerability is directly exploited through a public-facing application to achieve remote code execution and initial access. The technique explicitly describes exploiting such application-layer vulnerabilities, making this a direct and canonical match.
----------------------
-Attack Technique:
-Name: Exploitation of Remote Services (T1210)
-Description:
-Adversaries may exploit vulnerabilities in network services to gain unauthorized access to remote systems.
-
-Vulnerability:
-CVE ID: CVE-2017-0144
-Description:
-Microsoft SMBv1 vulnerability allows remote attackers to execute arbitrary code via crafted SMB packets.
-
-Score: 10
-
-Rationale:
-The vulnerability is exploited by sending crafted packets to a network-exposed SMB service, resulting in remote code execution. This precisely matches the definition of exploiting a remote service for unauthorized access.
----------------------
-Attack Technique:
-Name: Credential Dumping (T1003)
-Description:
-Adversaries may attempt to dump credentials from operating systems or applications.
-
-Vulnerability:
-CVE ID: CVE-2020-1472
-Description:
-Netlogon Elevation of Privilege vulnerability allows attackers to impersonate domain controllers due to cryptographic flaws.
-
-Score: 8
-
-Rationale:
-While the vulnerability itself does not directly dump credentials, it enables attackers to elevate privileges to domain controller level, which strongly facilitates credential dumping. The relationship is strong but indirect, as the technique follows exploitation rather than constituting the exploit itself.
----------------------
-Attack Technique:
-Name: Abuse Elevation Control Mechanism (T1548)
-Description:
-Adversaries may bypass or abuse mechanisms designed to control privilege escalation.
-
-Vulnerability:
-CVE ID: CVE-2021-36934
-Description:
-Windows allows low-privileged users to read sensitive registry hives due to incorrect permission settings.
-
-Score: 7
-
-Rationale:
-The vulnerability weakens privilege boundaries by exposing sensitive system data to low-privileged users. While the technique is broader than the specific flaw, exploitation of the vulnerability meaningfully enables abuse of elevation control mechanisms.
----------------------
-Attack Technique:
-Name: Phishing (T1566)
-Description:
-Adversaries may send phishing messages to gain access to victim systems or credentials.
-
-Vulnerability:
-CVE ID: CVE-2018-4878
-Description:
-Adobe Flash Player allows remote code execution through crafted Flash content causing memory corruption.
-
-Score: 5
-
-Rationale:
-Phishing can be used as a delivery mechanism to lure victims into opening malicious Flash content that triggers the vulnerability. However, the technique does not exploit the vulnerability itself and is only indirectly related.
----------------------
-Attack Technique:
-Name: Data Encrypted for Impact (T1486)
-Description:
-Adversaries may encrypt data on target systems to disrupt availability.
-
-Vulnerability:
-CVE ID: CVE-2019-0708
-Description:
-Remote Desktop Services vulnerability allows remote code execution via crafted RDP requests.
-
-Score: 2
-
-Rationale:
-Although the vulnerability could be used to gain access that later enables ransomware activity, the encryption technique does not depend on or directly leverage the vulnerability. The relationship is weak and purely consequential.
----------------------
-Attack Technique:
-Name: Exfiltration Over Web Service (T1567)
-Description:
-Adversaries may exfiltrate data using web services.
-
-Vulnerability:
-CVE ID: CVE-2014-0160
-Description:
-OpenSSL Heartbleed vulnerability allows attackers to read sensitive memory contents from affected systems.
-
-Score: 1
-
-Rationale:
-The vulnerability results in unintended memory disclosure but does not involve or enable data exfiltration via web services. The technique and vulnerability operate through unrelated mechanisms.
----------------------
-
-INSTRUCTIONS:
-Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
-
-Example:
-Score: 8
-
-
-------------------------------------------------------------
---- TBD: v3 as base prompt extended w/ few shot examples ---
+--- Qwen prompt extended w/ few shot examples ---
 ------------------------------------------------------------
 You are an expert in cyber attack techniques and vulnerability exploitation.
 
@@ -532,7 +354,7 @@ Score: 8
 
 
 ------------------------------------
---- v6a: Gemma GEPA Optimization ---
+--- GEPA ---
 ------------------------------------
 
 You are a cybersecurity expert specializing in attack techniques and software vulnerabilities.
@@ -586,8 +408,3 @@ Respond with ONLY a single integer from 0 to 10. Do NOT provide any explanation 
 
 Example:
 Score: 9
-
-
-------------------------------------
---- v6b: Qwen GEPA Optimization ---
-------------------------------------

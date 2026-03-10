@@ -1,5 +1,5 @@
 *********************************
---- v1: base prompt variation ---
+--- zero shot ---
 *********************************
 You are a cybersecurity expert specializing in vulnerability analysis and weakness classification.
 
@@ -39,49 +39,9 @@ Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or rea
 Example:
 Score: 8
 
-*********************************
---- v2: base prompt variation ---
-*********************************
-You are evaluating the strength of relationship between a CVE and a CWE.
-
-The goal is to determine how well the CWE explains the vulnerability described in the CVE.
-
-RELATIONSHIP SCALE:
-
-10 → CWE directly describes the root weakness exploited by the CVE  
-8–9 → CWE strongly explains the vulnerability but may be slightly broader or missing small details  
-5–7 → CWE is plausibly related but not clearly primary  
-2–4 → CWE is loosely or indirectly related  
-0–1 → No meaningful relationship  
-
-EVALUATION PROCESS:
-- Identify the vulnerability mechanism described in the CVE.
-- Identify the weakness class described in the CWE.
-- Determine whether exploitation of the CVE depends on that weakness.
-
-If exploitation would NOT reasonably occur without the CWE weakness → score ≥ 8  
-If the CWE could apply but is not required → score 4–7  
-If the CWE does not explain the vulnerability → score ≤ 3  
-
-INPUTS:
-
-CVE:
-ID: {right_id}
-Description: {right_description}
-
-CWE:
-ID: {left_id}
-Description: {left_description}
-
-INSTRUCTIONS:
-Output ONLY a single integer from 0 to 10. Do NOT provide any explanation or reasoning.
-
-Example:
-Score: 8
-
 
 ***********************************************************
---- v3: v2 as base prompt extended w/ few shot examples ---
+--- few shot examples ---
 ***********************************************************
 You are evaluating the strength of relationship between a CVE and a CWE.
 
